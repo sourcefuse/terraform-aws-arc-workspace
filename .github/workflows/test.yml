@@ -13,8 +13,8 @@ on:       # yamllint disable-line rule:truthy
 jobs:
   tflint:
     runs-on:
-      - refarch
-      - dev
+      - arc
+      - poc
     name: tflint
     steps:
       - uses: actions/checkout@master
