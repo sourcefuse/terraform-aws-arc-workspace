@@ -70,17 +70,17 @@ data "aws_iam_policy" "workspaces_self_service_access" {
 
 // default SG
 
-data "aws_security_group" "default" {
-  filter {
-    name   = "tag:Name"
-    values = ["arc-poc-vpc-default"]
-  }
+# data "aws_security_group" "default" {
+#   filter {
+#     name   = "tag:Name"
+#     values = ["arc-poc-vpc-default"]
+#   }
 
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
-  }
-}
+#   filter {
+#     name   = "vpc-id"
+#     values = [data.aws_vpc.vpc.id]
+#   }
+# }
 
 // Bundle 
 

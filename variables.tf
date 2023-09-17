@@ -61,17 +61,17 @@ variable "directory_size" {
   default     = "Small" # Provide a default value
 }
 
-variable "directory_vpc_settings" {
-  description = "VPC settings for MicrosoftAD."
-  type = object({
-    vpc_id     = string
-    subnet_ids = list(string)
-  })
-  default = {
-    vpc_id     = ""
-    subnet_ids = []
-  }
-}
+# variable "directory_vpc_settings" {
+#   description = "VPC settings for MicrosoftAD."
+#   type = object({
+#     vpc_id     = string
+#     subnet_ids = list(string)
+#   })
+#   default = {
+#     vpc_id     = ""
+#     subnet_ids = []
+#   }
+# }
 
 variable "directory_connect_settings" {
   description = "Connect settings for ADConnector."
