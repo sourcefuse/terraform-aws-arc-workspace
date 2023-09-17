@@ -110,26 +110,48 @@ resource "aws_workspaces_directory" "directory_ADConnector" {
   ]
 }
 
+resource "random_password" "ad_password" {
+  length  = 20
+  special = true
+  override_special = "!@#$%^&*()"
+}
 
+resource "aws_ssm_parameter" "ad_password" {
+  name  = local.ssm_parameter_name # Replace with your desired SSM parameter name
+  type  = "SecureString"
+  value = random_password.ad_password.result
+}
 
 resource "aws_directory_service_directory" "microsoftAD" {
   count    = var.directory_type == "MicrosoftAD" ? 1 : 0
   name     = var.directory_name
-  password = data.aws_secretsmanager_secret_version.ad_password.secret_string
+  password = random_password.ad_password.result
   size     = var.directory_size
   edition  = "Standard"
   type     = var.directory_type
 
   vpc_settings {
-    vpc_id     = var.directory_vpc_settings.vpc_id
-    subnet_ids = var.directory_vpc_settings.subnet_ids
+    vpc_id     = data.aws_vpc.vpc.id
+    subnet_ids = local.private_subnet_cidr
   }
+}
+
+resource "random_password" "ad_connector_password" {
+  length  = 20
+  special = true
+  override_special = "!@#$%^&*()"
+}
+
+resource "aws_ssm_parameter" "ad_connector_password" {
+  name  = local.ssm_ad_connector_parameter_name # Replace with your desired SSM parameter name
+  type  = "SecureString"
+  value = random_password.ad_connector_password.result
 }
 
 resource "aws_directory_service_directory" "ADConnector" {
   count    = var.directory_type == "ADConnector" ? 1 : 0
   name     = var.directory_name
-  password = data.aws_secretsmanager_secret_version.ad_password.secret_string
+  password = random_password.ad_connector_password.result
   size     = var.directory_size
   type     = var.directory_type
 
@@ -181,4 +203,8 @@ resource "aws_workspaces_workspace" "workspace" {
   }
 
   tags = module.tags.tags
+  depends_on = [
+    aws_directory_service_directory.microsoftAD,
+    aws_workspaces_directory.directory_microsoftAD
+  ]
 }

@@ -12,8 +12,8 @@ data "aws_subnets" "private" {
     name = "tag:Name"
 
     values = [
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}a",
-      "${var.namespace}-${var.environment}-privatesubnet-private-${var.region}b"
+      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}a",
+      "${var.namespace}-${var.environment}-private-subnet-private-${var.region}b"
     ]
   }
   filter {
@@ -27,25 +27,25 @@ data "aws_subnet" "private" {
   id       = each.value
 }
 
-data "aws_subnets" "public" {
-  filter {
-    name = "tag:Name"
+# data "aws_subnets" "public" {
+#   filter {
+#     name = "tag:Name"
 
-    values = [
-      "${var.namespace}-${var.environment}-publicsubnet-public-${var.region}a",
-      "${var.namespace}-${var.environment}-publicsubnet-public-${var.region}b",
-    ]
-  }
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
-  }
-}
+#     values = [
+#       "${var.namespace}-${var.environment}-public-subnet-public-${var.region}a",
+#       "${var.namespace}-${var.environment}-public-subnet-public-${var.region}b",
+#     ]
+#   }
+#   filter {
+#     name   = "vpc-id"
+#     values = [data.aws_vpc.vpc.id]
+#   }
+# }
 
-data "aws_subnet" "public" {
-  for_each = toset(data.aws_subnets.public.ids)
-  id       = each.value
-}
+# data "aws_subnet" "public" {
+#   for_each = toset(data.aws_subnets.public.ids)
+#   id       = each.value
+# }
 
 ##### Default workspace role
 
@@ -88,12 +88,4 @@ data "aws_workspaces_bundle" "bundle" {
   owner = "AMAZON"
   name  = "Standard with Windows 10 (Server 2019 based)"
 }
-// secrets 
 
-data "aws_secretsmanager_secret" "secrets" {
-  name = local.secret_name
-}
-
-data "aws_secretsmanager_secret_version" "ad_password" {
-  secret_id = data.aws_secretsmanager_secret.secrets.id
-}

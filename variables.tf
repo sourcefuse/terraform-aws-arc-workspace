@@ -52,7 +52,7 @@ variable "directory_type" {
 variable "directory_name" {
   description = "Name of the directory."
   type        = string
-  default     = "corp.example.com" # Provide a default value
+  default     = "" # Provide a default value
 }
 
 variable "directory_size" {
@@ -153,5 +153,5 @@ variable "bundle_id" {
   description = "The ID of the bundle to use for the workspaces."
   type        = string
   # You can specify a default value here if you have a default bundle ID.
-  # default     = "default-bundle-id"
+  default     = null
 }
