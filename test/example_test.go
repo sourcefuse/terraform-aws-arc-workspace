@@ -10,7 +10,7 @@ import (
 func TestTerraformExample(t *testing.T) {
 	// Arrange
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../example/.",
+		TerraformDir: "../example/Microsoft-AD",
 	}
 	defer terraform.Destroy(t, terraformOptions)
 
@@ -20,7 +20,6 @@ func TestTerraformExample(t *testing.T) {
 	// Assert
 	assert := assert.New(t)
 
-	outputValue := terraform.Output(t, terraformOptions, "output_name")
+	outputValue := terraform.Output(t, terraformOptions, "workspace_directory_id")
 	assert.NotNil(outputValue)
-	assert.Equal("output_value", outputValue)
 }

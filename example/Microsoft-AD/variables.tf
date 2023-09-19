@@ -7,6 +7,18 @@ variable "region" {
   description = "AWS region"
 }
 
+variable "namespace" {
+  type        = string
+  description = "Namespace for the resources."
+  default     = "woebot"
+}
+
+variable "environment" {
+  type        = string
+  description = "Name of the environment resources will belong to."
+  default     = "dev"
+}
+
 variable "workspace_properties" {
   description = "Workspace properties configuration."
   type = object({
@@ -17,9 +29,9 @@ variable "workspace_properties" {
     running_mode_auto_stop_timeout_in_minutes = number
   })
   default = {
-    compute_type_name                         = "VALUE"
-    user_volume_size_gib                      = 10
-    root_volume_size_gib                      = 80
+    compute_type_name                         = "POWERPRO"
+    user_volume_size_gib                      = 100
+    root_volume_size_gib                      = 175
     running_mode                              = "ALWAYS_ON"
     running_mode_auto_stop_timeout_in_minutes = 60
   }
@@ -31,29 +43,22 @@ variable "user_names" {
   default     = {}
 }
 
-variable "vpc_id" {
-  description = "default vpc"
-  type        = string
-}
-
-variable "subnet_ids" {
-  description = "private subnet_ids"
-  type        = list(string)
-}
-
-variable "workspaces_service_access_arn" {
-  description = "workspaces service access from aws"
-  type        = string
-}
-
-variable "workspaces_self_service_access_arn" {
-  description = "workspaces self service access from aws"
-  type        = string
-}
-
-variable "tags" {
-  description = "tags to add to your resources"
-  type        = map(string)
+variable "ip_rules" {
+  description = "List of IP rules"
+  type = list(object({
+    source      = string
+    description = string
+  }))
+  default = [
+    {
+      source      = "150.24.14.0/24" // change it according to your requirement
+      description = "NAT"
+    },
+    {
+      source      = "125.191.14.85/32" // change it according to your requirement
+      description = "NAT"
+    },
+  ]
 }
 
 variable "directory_type" {
@@ -72,34 +77,6 @@ variable "directory_size" {
   description = "The size of the directory (Small or Large are accepted values). Large by default."
   type        = string
   default     = "Small" # Provide a default value
-}
-
-# variable "directory_vpc_settings" {
-#   description = "VPC settings for MicrosoftAD."
-#   type = object({
-#     vpc_id     = string
-#     subnet_ids = list(string)
-#   })
-#   default = {
-#     vpc_id     = ""
-#     subnet_ids = []
-#   }
-# }
-
-variable "directory_connect_settings" {
-  description = "Connect settings for ADConnector."
-  type = object({
-    customer_dns_ips  = list(string)
-    customer_username = string
-    subnet_ids        = list(string)
-    vpc_id            = string
-  })
-  default = {
-    customer_dns_ips  = []
-    customer_username = ""
-    subnet_ids        = []
-    vpc_id            = ""
-  }
 }
 
 variable "self_service_permissions" {
@@ -162,79 +139,10 @@ variable "workspace_creation_properties" {
   }
 }
 
-variable "bundle_id" {
-  description = "The ID of the bundle to use for the workspaces."
-  type        = string
-  # You can specify a default value here if you have a default bundle ID.
-  default = null # "wsb-gk1wpk43z"
-}
-
-/// Security Groups
-
-variable "security_group_name" {
-  description = "Name of the security group"
-  type        = string
-  default     = "workspace-SG"
-}
-
-variable "security_group_description" {
-  description = "Description of the security group"
-  type        = string
-  default     = "My security group description"
-}
-
-variable "ingress_rules" {
-  description = "List of ingress rules"
-  type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = string
-    cidr_blocks = optional(list(string), [])
-  }))
-  default = [
-    {
-      from_port = 443
-      to_port   = 443
-      protocol  = "tcp"
-    },
-  ]
-}
-
-variable "egress_rules" {
-  description = "List of egress rules"
-  type = list(object({
-    from_port   = number
-    to_port     = number
-    protocol    = any
-    cidr_blocks = optional(list(string), [])
-  }))
-  default = [
-    {
-      from_port   = 0
-      to_port     = 0
-      protocol    = -1
-      cidr_blocks = ["0.0.0.0/0"]
-    },
-  ]
-}
-
-variable "ip_group_name" {
-  description = "Name of the IP access control group"
-  type        = string
-  default     = "nat-gateway-ip-list"
-}
-
-variable "ip_group_description" {
-  description = "Description of the IP access control group"
-  type        = string
-  default     = "nat-gateway-ip-list control group"
-}
-
-variable "ip_rules" {
-  description = "List of IP rules"
-  type = list(object({
-    source      = string
-    description = string
-  }))
-  default = []
+variable "environment_name_conversion" {
+  description = "Map environment name with Control Tower generated naming convention for VPC resource names."
+  type        = map(string)
+  default = {
+    dev = "Non-Prod"
+  }
 }
