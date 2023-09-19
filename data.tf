@@ -11,20 +11,6 @@ data "aws_iam_policy_document" "workspaces" {
   }
 }
 
-// default SG
-
-# data "aws_security_group" "default" {
-#   filter {
-#     name   = "tag:Name"
-#     values = ["arc-poc-vpc-default"]
-#   }
-
-#   filter {
-#     name   = "vpc-id"
-#     values = [data.aws_vpc.vpc.id]
-#   }
-# }
-
 // Bundle
 
 data "aws_workspaces_bundle" "bundle" {
