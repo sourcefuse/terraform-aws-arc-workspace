@@ -53,7 +53,7 @@ variable "user_names" {
   }
 }
 ```
-As we specified three custom user_names that means three workspaces for each user
+As we specified three custom user_names that means three workspaces for each user will get created
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
