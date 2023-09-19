@@ -50,5 +50,7 @@
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_workspace_directory_id"></a> [workspace\_directory\_id](#output\_workspace\_directory\_id) | The ID of the AWS Workspaces directory. |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
