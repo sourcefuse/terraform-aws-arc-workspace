@@ -24,6 +24,3 @@ data "aws_iam_policy" "workspaces_service_access" {
 data "aws_iam_policy" "workspaces_self_service_access" {
   name = "AmazonWorkSpacesSelfServiceAccess"
 }
-
-
-

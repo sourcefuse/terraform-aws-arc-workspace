@@ -29,7 +29,7 @@ module "tags" {
 }
 
 module "workspaces" {
-  source = "../" # Replace with the relative path to your module folder
+  source = "../../"
 
   region                             = var.region
   vpc_id                             = data.aws_vpc.vpc.id
@@ -42,9 +42,8 @@ module "workspaces" {
   workspace_creation_properties      = var.workspace_creation_properties
   workspaces_service_access_arn      = data.aws_iam_policy.workspaces_service_access.arn
   workspaces_self_service_access_arn = data.aws_iam_policy.workspaces_self_service_access.arn
-  user_names = {
-    "mayank.sharma" = null
-  }
-  workspace_properties = var.workspace_properties
-  tags                 = module.tags.tags
+  user_names                         = var.user_names // first run terraform apply and then create custom user names in workspace manually and specify here that username and re-run tf apply so that workspace with custom-username gets created . By default you can specify Administrators , Admins here which are default in directory and that will create workspace
+  workspace_properties               = var.workspace_properties
+  ip_rules                           = var.ip_rules // change it according to your requirement
+  tags                               = module.tags.tags
 }

@@ -20,6 +20,47 @@ provider "aws" {
   region = var.region
 }
 
+resource "aws_security_group" "workspace" {
+  name        = var.security_group_name
+  description = var.security_group_description
+  vpc_id      = var.vpc_id
+
+  dynamic "ingress" {
+    for_each = var.ingress_rules
+    content {
+      from_port   = ingress.value.from_port
+      to_port     = ingress.value.to_port
+      protocol    = ingress.value.protocol
+      cidr_blocks = ingress.value.cidr_blocks
+    }
+  }
+
+  dynamic "egress" {
+    for_each = var.egress_rules
+    content {
+      from_port   = egress.value.from_port
+      to_port     = egress.value.to_port
+      protocol    = egress.value.protocol
+      cidr_blocks = egress.value.cidr_blocks
+    }
+  }
+}
+
+////////// IP GROUPS
+
+resource "aws_workspaces_ip_group" "nat" {
+  name        = var.ip_group_name
+  description = var.ip_group_description
+
+  dynamic "rules" {
+    for_each = var.ip_rules
+    content {
+      source      = rules.value.source
+      description = rules.value.description
+    }
+  }
+}
+
 resource "aws_workspaces_directory" "directory_microsoftAD" {
   count = var.directory_type == "MicrosoftAD" ? 1 : 0
 
@@ -48,12 +89,16 @@ resource "aws_workspaces_directory" "directory_microsoftAD" {
   }
 
   workspace_creation_properties {
-    custom_security_group_id            = var.workspace_creation_properties.custom_security_group_id
+    custom_security_group_id            = aws_security_group.workspace.id
     default_ou                          = var.workspace_creation_properties.default_ou
     enable_internet_access              = var.workspace_creation_properties.enable_internet_access
     enable_maintenance_mode             = var.workspace_creation_properties.enable_maintenance_mode
     user_enabled_as_local_administrator = var.workspace_creation_properties.user_enabled_as_local_administrator
   }
+
+  ip_group_ids = [
+    aws_workspaces_ip_group.nat.id
+  ]
 
   depends_on = [
     aws_iam_role_policy_attachment.workspaces_default_service_access,

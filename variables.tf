@@ -168,3 +168,73 @@ variable "bundle_id" {
   # You can specify a default value here if you have a default bundle ID.
   default = null # "wsb-gk1wpk43z"
 }
+
+/// Security Groups
+
+variable "security_group_name" {
+  description = "Name of the security group"
+  type        = string
+  default     = "workspace-SG"
+}
+
+variable "security_group_description" {
+  description = "Description of the security group"
+  type        = string
+  default     = "My security group description"
+}
+
+variable "ingress_rules" {
+  description = "List of ingress rules"
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = string
+    cidr_blocks = optional(list(string), [])
+  }))
+  default = [
+    {
+      from_port = 443
+      to_port   = 443
+      protocol  = "tcp"
+    },
+  ]
+}
+
+variable "egress_rules" {
+  description = "List of egress rules"
+  type = list(object({
+    from_port   = number
+    to_port     = number
+    protocol    = any
+    cidr_blocks = optional(list(string), [])
+  }))
+  default = [
+    {
+      from_port   = 0
+      to_port     = 0
+      protocol    = -1
+      cidr_blocks = ["0.0.0.0/0"]
+    },
+  ]
+}
+
+variable "ip_group_name" {
+  description = "Name of the IP access control group"
+  type        = string
+  default     = "nat-gateway-ip-list"
+}
+
+variable "ip_group_description" {
+  description = "Description of the IP access control group"
+  type        = string
+  default     = "nat-gateway-ip-list control group"
+}
+
+variable "ip_rules" {
+  description = "List of IP rules"
+  type = list(object({
+    source      = string
+    description = string
+  }))
+  default = []
+}

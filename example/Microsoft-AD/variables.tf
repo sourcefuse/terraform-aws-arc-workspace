@@ -37,11 +37,29 @@ variable "workspace_properties" {
   }
 }
 
-# variable "user_names" {
-#   description = "List of usernames to create workspaces for"
-#   type        = map(string)
-#   default     = {}
-# }
+variable "user_names" {
+  description = "List of usernames to create workspaces for"
+  type        = map(string)
+  default     = {}
+}
+
+variable "ip_rules" {
+  description = "List of IP rules"
+  type = list(object({
+    source      = string
+    description = string
+  }))
+  default = [
+    {
+      source      = "150.24.14.0/24" // change it according to your requirement
+      description = "NAT"
+    },
+    {
+      source      = "125.191.14.85/32" // change it according to your requirement
+      description = "NAT"
+    },
+  ]
+}
 
 variable "directory_type" {
   description = "Type of the directory service (MicrosoftAD or ADConnector)."
@@ -120,13 +138,6 @@ variable "workspace_creation_properties" {
     user_enabled_as_local_administrator = true
   }
 }
-
-# variable "bundle_id" {
-#   description = "The ID of the bundle to use for the workspaces."
-#   type        = string
-#   # You can specify a default value here if you have a default bundle ID.
-#   default = null # "wsb-gk1wpk43z"
-# }
 
 variable "environment_name_conversion" {
   description = "Map environment name with Control Tower generated naming convention for VPC resource names."

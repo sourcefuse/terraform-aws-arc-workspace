@@ -6,13 +6,54 @@ SourceFuse AWS Reference Architecture (ARC) Terraform module for managing Worksp
 
 ## Usage
 
-To see a full example, check out the [main.tf](./example/main.tf) file in the example folder.  
+To see a Microsoft AD example, check out the [main.tf](./example/Microsoft-AD/main.tf) file in the example folder.  
 
 ```hcl
-module "this" {
-  source = "git::https://github.com/sourcefuse/terraform-aws-refarch-<module_name>"
+module "workspaces" {
+  source = "../../"
+  region                             = var.region
+  vpc_id                             = data.aws_vpc.vpc.id
+  subnet_ids                         = data.aws_subnets.private.ids
+  directory_type                     = var.directory_type
+  directory_name                     = var.directory_name
+  directory_size                     = var.directory_size
+  self_service_permissions           = var.self_service_permissions
+  workspace_access_properties        = var.workspace_access_properties
+  workspace_creation_properties      = var.workspace_creation_properties
+  workspaces_service_access_arn      = data.aws_iam_policy.workspaces_service_access.arn
+  workspaces_self_service_access_arn = data.aws_iam_policy.workspaces_self_service_access.arn
+  user_names                         = var.user_names
+  workspace_properties               = var.workspace_properties
+  ip_rules                           = var.ip_rules // change it according to your requirement
+  tags                               = module.tags.tags
 }
 ```
+## IMPORTANT NOTE
+
+For user_names attribute which is shown in example. There are two approaches you can follow
+1. If you want to create custom user_names so you have to first run terraform apply and then create custom user names in workspace manually and specify here that username and re-run tf apply so that workspace with custom-username gets created with appropriate configuration.
+
+2. By default you can specify Administrators , Admins here which are default in directory and that will create workspace
+
+3. if you specify custom user_names which can be any number make sure if you specify, lets say 5 custom user_names then terraform will create 5 workspaces for each user.
+
+4. custom user_names need to be created manually as mentioned in 1st point as there is no functionality in terraform to achieve this as of now.
+
+5. if you leave user_names attribute empty then no workspace will get created , only directory will get created and iam-roles etc.
+
+6. example to specify custom user_names
+```
+variable "user_names" {
+  description = "List of usernames to create workspaces for"
+  type        = map(string)
+  default     = {
+     "mayank.sharma" = null
+     "james.crowley" = null
+     "travis.saucier" = null
+  }
+}
+```
+As we specified three custom user_names that means three workspaces for each user
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -43,10 +84,12 @@ No modules.
 | [aws_iam_role.workspaces_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy_attachment.workspaces_default_self_service_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.workspaces_default_service_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_security_group.workspace](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
 | [aws_ssm_parameter.ad_connector_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_ssm_parameter.ad_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
 | [aws_workspaces_directory.directory_ADConnector](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_directory) | resource |
 | [aws_workspaces_directory.directory_microsoftAD](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_directory) | resource |
+| [aws_workspaces_ip_group.nat](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_ip_group) | resource |
 | [aws_workspaces_workspace.workspace](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/workspaces_workspace) | resource |
 | [random_password.ad_connector_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
 | [random_password.ad_password](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/password) | resource |
@@ -62,7 +105,14 @@ No modules.
 | <a name="input_directory_name"></a> [directory\_name](#input\_directory\_name) | must be a fully qualified domain name and cannot end with a trailing period | `string` | `"poc.woebothealth.com"` | no |
 | <a name="input_directory_size"></a> [directory\_size](#input\_directory\_size) | The size of the directory (Small or Large are accepted values). Large by default. | `string` | `"Small"` | no |
 | <a name="input_directory_type"></a> [directory\_type](#input\_directory\_type) | Type of the directory service (MicrosoftAD or ADConnector). | `string` | `"MicrosoftAD"` | no |
+| <a name="input_egress_rules"></a> [egress\_rules](#input\_egress\_rules) | List of egress rules | <pre>list(object({<br>    from_port   = number<br>    to_port     = number<br>    protocol    = any<br>    cidr_blocks = optional(list(string), [])<br>  }))</pre> | <pre>[<br>  {<br>    "cidr_blocks": [<br>      "0.0.0.0/0"<br>    ],<br>    "from_port": 0,<br>    "protocol": -1,<br>    "to_port": 0<br>  }<br>]</pre> | no |
+| <a name="input_ingress_rules"></a> [ingress\_rules](#input\_ingress\_rules) | List of ingress rules | <pre>list(object({<br>    from_port   = number<br>    to_port     = number<br>    protocol    = string<br>    cidr_blocks = optional(list(string), [])<br>  }))</pre> | <pre>[<br>  {<br>    "from_port": 443,<br>    "protocol": "tcp",<br>    "to_port": 443<br>  }<br>]</pre> | no |
+| <a name="input_ip_group_description"></a> [ip\_group\_description](#input\_ip\_group\_description) | Description of the IP access control group | `string` | `"nat-gateway-ip-list control group"` | no |
+| <a name="input_ip_group_name"></a> [ip\_group\_name](#input\_ip\_group\_name) | Name of the IP access control group | `string` | `"nat-gateway-ip-list"` | no |
+| <a name="input_ip_rules"></a> [ip\_rules](#input\_ip\_rules) | List of IP rules | <pre>list(object({<br>    source      = string<br>    description = string<br>  }))</pre> | `[]` | no |
 | <a name="input_region"></a> [region](#input\_region) | AWS region | `string` | `"us-west-2"` | no |
+| <a name="input_security_group_description"></a> [security\_group\_description](#input\_security\_group\_description) | Description of the security group | `string` | `"My security group description"` | no |
+| <a name="input_security_group_name"></a> [security\_group\_name](#input\_security\_group\_name) | Name of the security group | `string` | `"workspace-SG"` | no |
 | <a name="input_self_service_permissions"></a> [self\_service\_permissions](#input\_self\_service\_permissions) | Self-service permissions configuration. | <pre>object({<br>    change_compute_type  = bool<br>    increase_volume_size = bool<br>    rebuild_workspace    = bool<br>    restart_workspace    = bool<br>    switch_running_mode  = bool<br>  })</pre> | <pre>{<br>  "change_compute_type": false,<br>  "increase_volume_size": false,<br>  "rebuild_workspace": false,<br>  "restart_workspace": true,<br>  "switch_running_mode": false<br>}</pre> | no |
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | private subnet\_ids | `list(string)` | n/a | yes |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags to add to your resources | `map(string)` | n/a | yes |
