@@ -1,4 +1,6 @@
-# arc-terraform-workspace
+# [arc-terraform-workspace](https://github.com/sourcefuse/arc-terraform-workspace)
+
+[![Known Vulnerabilities](https://github.com/sourcefuse/arc-terraform-workspace/actions/workflows/snyk.yaml/badge.svg)](https://github.com/sourcefuse/arc-terraform-workspace/actions/workflows/snyk.yaml)
 
 ## Overview
 
