@@ -7,10 +7,10 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.0"
+      version = "~> 5.0"
     }
     random = {
-      source = "hashicorp/random"
+      source  = "hashicorp/random"
       version = "~> 3.0"
     }
   }
@@ -20,25 +20,13 @@ provider "aws" {
   region = var.region
 }
 
-module "tags" {
-  source = "git::https://github.com/sourcefuse/terraform-aws-refarch-tags.git?ref=1.2.1"
-
-  environment = var.environment
-  project     = var.namespace
-
-  extra_tags = {
-    MonoRepo     = "True"
-    MonoRepoPath = "terraform/workspaces"
-  }
-}
-
 resource "aws_workspaces_directory" "directory_microsoftAD" {
   count = var.directory_type == "MicrosoftAD" ? 1 : 0
 
   directory_id = aws_directory_service_directory.microsoftAD[0].id
-  subnet_ids   = local.private_subnet_cidr
+  subnet_ids   = var.subnet_ids
 
-  tags = module.tags.tags
+  tags = var.tags
 
   self_service_permissions {
     change_compute_type  = var.self_service_permissions.change_compute_type
@@ -77,9 +65,9 @@ resource "aws_workspaces_directory" "directory_ADConnector" {
   count = var.directory_type == "ADConnector" ? 1 : 0
 
   directory_id = aws_directory_service_directory.ADConnector[0].id
-  subnet_ids   = local.private_subnet_cidr
+  subnet_ids   = var.subnet_ids
 
-  tags = module.tags.tags
+  tags = var.tags
 
   self_service_permissions {
     change_compute_type  = var.self_service_permissions.change_compute_type
@@ -115,8 +103,8 @@ resource "aws_workspaces_directory" "directory_ADConnector" {
 }
 
 resource "random_password" "ad_password" {
-  length  = 20
-  special = true
+  length           = 20
+  special          = true
   override_special = "!@#$%^&*()"
 }
 
@@ -135,14 +123,14 @@ resource "aws_directory_service_directory" "microsoftAD" {
   type     = var.directory_type
 
   vpc_settings {
-    vpc_id     = data.aws_vpc.vpc.id
-    subnet_ids = local.private_subnet_cidr
+    vpc_id     = var.vpc_id
+    subnet_ids = var.subnet_ids
   }
 }
 
 resource "random_password" "ad_connector_password" {
-  length  = 20
-  special = true
+  length           = 20
+  special          = true
   override_special = "!@#$%^&*()"
 }
 
@@ -178,21 +166,22 @@ resource "aws_iam_role" "workspaces_default" {
 
 resource "aws_iam_role_policy_attachment" "workspaces_default_service_access" {
   role       = aws_iam_role.workspaces_default.name
-  policy_arn = data.aws_iam_policy.workspaces_service_access.arn
+  policy_arn = var.workspaces_service_access_arn
 }
 
 resource "aws_iam_role_policy_attachment" "workspaces_default_self_service_access" {
   role       = aws_iam_role.workspaces_default.name
-  policy_arn = data.aws_iam_policy.workspaces_self_service_access.arn
+  policy_arn = var.workspaces_self_service_access_arn
 }
 
 #####################################################################
 ########### workspace ##########################
 
 resource "aws_workspaces_workspace" "workspace" {
+  for_each     = var.user_names
   directory_id = var.directory_type == "MicrosoftAD" ? aws_directory_service_directory.microsoftAD[0].id : aws_directory_service_directory.ADConnector[0].id
   bundle_id    = var.bundle_id != null ? var.bundle_id : data.aws_workspaces_bundle.bundle.id
-  user_name    = var.user_name
+  user_name    = each.key
 
   root_volume_encryption_enabled = true
   user_volume_encryption_enabled = true
@@ -206,7 +195,7 @@ resource "aws_workspaces_workspace" "workspace" {
     running_mode_auto_stop_timeout_in_minutes = var.workspace_properties.running_mode_auto_stop_timeout_in_minutes
   }
 
-  tags = module.tags.tags
+  tags = var.tags
   depends_on = [
     aws_directory_service_directory.microsoftAD,
     aws_workspaces_directory.directory_microsoftAD

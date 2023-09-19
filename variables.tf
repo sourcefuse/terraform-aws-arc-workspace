@@ -3,20 +3,8 @@
 ################################################################################
 variable "region" {
   type        = string
-  default     = "us-east-1"
+  default     = "us-west-2"
   description = "AWS region"
-}
-
-variable "namespace" {
-  type        = string
-  description = "Namespace for the resources."
-  default     = "arc"
-}
-
-variable "environment" {
-  type        = string
-  description = "Name of the environment resources will belong to."
-  default     = "poc"
 }
 
 variable "workspace_properties" {
@@ -32,15 +20,40 @@ variable "workspace_properties" {
     compute_type_name                         = "VALUE"
     user_volume_size_gib                      = 10
     root_volume_size_gib                      = 80
-    running_mode                              = "AUTO_STOP"
+    running_mode                              = "ALWAYS_ON"
     running_mode_auto_stop_timeout_in_minutes = 60
   }
 }
 
-variable "user_name" {
-  description = "User name for the workspace."
+variable "user_names" {
+  description = "List of usernames to create workspaces for"
+  type        = map(string)
+  default     = {}
+}
+
+variable "vpc_id" {
+  description = "default vpc"
   type        = string
-  default     = "john.doe"
+}
+
+variable "subnet_ids" {
+  description = "private subnet_ids"
+  type        = list(string)
+}
+
+variable "workspaces_service_access_arn" {
+  description = "workspaces service access from aws"
+  type        = string
+}
+
+variable "workspaces_self_service_access_arn" {
+  description = "workspaces self service access from aws"
+  type        = string
+}
+
+variable "tags" {
+  description = "tags to add to your resources"
+  type        = map(string)
 }
 
 variable "directory_type" {
@@ -50,9 +63,9 @@ variable "directory_type" {
 }
 
 variable "directory_name" {
-  description = "Name of the directory."
+  description = "must be a fully qualified domain name and cannot end with a trailing period"
   type        = string
-  default     = "" # Provide a default value
+  default     = "poc.woebothealth.com" # Provide a default value
 }
 
 variable "directory_size" {
@@ -99,11 +112,11 @@ variable "self_service_permissions" {
     switch_running_mode  = bool
   })
   default = {
-    change_compute_type  = true
-    increase_volume_size = true
-    rebuild_workspace    = true
+    change_compute_type  = false
+    increase_volume_size = false
+    rebuild_workspace    = false
     restart_workspace    = true
-    switch_running_mode  = true
+    switch_running_mode  = false
   }
 }
 
@@ -125,7 +138,7 @@ variable "workspace_access_properties" {
     device_type_ios        = "ALLOW"
     device_type_linux      = "ALLOW"
     device_type_osx        = "ALLOW"
-    device_type_web        = "ALLOW"
+    device_type_web        = "DENY"
     device_type_windows    = "ALLOW"
     device_type_zeroclient = "ALLOW"
   }
@@ -142,8 +155,8 @@ variable "workspace_creation_properties" {
   })
   default = {
     custom_security_group_id            = ""
-    default_ou                          = "OU=AWS,DC=Workgroup,DC=Example,DC=com"
-    enable_internet_access              = true
+    default_ou                          = ""
+    enable_internet_access              = false
     enable_maintenance_mode             = true
     user_enabled_as_local_administrator = true
   }
@@ -153,5 +166,5 @@ variable "bundle_id" {
   description = "The ID of the bundle to use for the workspaces."
   type        = string
   # You can specify a default value here if you have a default bundle ID.
-  default     = null
+  default = null # "wsb-gk1wpk43z"
 }

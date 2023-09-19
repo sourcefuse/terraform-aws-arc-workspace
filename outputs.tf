@@ -10,7 +10,7 @@ output "workspace_bundle_id" {
 
 output "workspace_user_name" {
   description = "The username of the AWS Workspaces user."
-  value       = var.user_name
+  value       = var.user_names
 }
 
 output "workspace_root_volume_encryption_enabled" {
@@ -37,9 +37,4 @@ output "workspace_properties" {
     running_mode                              = var.workspace_properties.running_mode
     running_mode_auto_stop_timeout_in_minutes = var.workspace_properties.running_mode_auto_stop_timeout_in_minutes
   }
-}
-
-output "workspace_tags" {
-  description = "The tags associated with AWS Workspaces."
-  value       = module.tags.tags
 }
