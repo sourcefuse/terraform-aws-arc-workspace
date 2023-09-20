@@ -9,11 +9,9 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   ## tag
   tag:
-    runs-on:
-      - poc
-      - arc
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Set GIT_TAG
         run: |
