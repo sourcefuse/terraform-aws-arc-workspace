@@ -173,7 +173,7 @@ the pipeline will kick off and tag the latest git commit.
 - Now execute the test  
   ```sh
   cd test
-  go test -timeout  30m
+  go test 
   ```
 
 ## Authors
