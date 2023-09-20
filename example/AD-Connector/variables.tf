@@ -40,7 +40,9 @@ variable "workspace_properties" {
 variable "user_names" {
   description = "List of usernames to create workspaces for"
   type        = map(string)
-  default     = {}
+  default = {
+
+  }
 }
 
 variable "ip_rules" {
@@ -64,13 +66,13 @@ variable "ip_rules" {
 variable "directory_type" {
   description = "Type of the directory service (MicrosoftAD or ADConnector)."
   type        = string
-  default     = "MicrosoftAD" # Provide a default value
+  default     = "ADConnector"
 }
 
 variable "directory_name" {
   description = "must be a fully qualified domain name and cannot end with a trailing period"
   type        = string
-  default     = "poc.woebothealth.com" # Provide a default value
+  default     = "poc.woebothealth.com"
 }
 
 variable "directory_size" {
@@ -145,6 +147,18 @@ variable "environment_name_conversion" {
   default = {
     dev = "Non-Prod"
   }
+}
+
+variable "customer_dns_ips" {
+  type        = list(string)
+  description = "(Required) The DNS IP addresses of the domain to connect to."
+  default     = []
+}
+
+variable "customer_username" {
+  type        = string
+  description = "(Required) The username corresponding to the password provided."
+  default     = ""
 }
 
 variable "volume_encryption_key" {

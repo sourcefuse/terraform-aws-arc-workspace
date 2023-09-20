@@ -134,12 +134,16 @@ resource "aws_workspaces_directory" "directory_ADConnector" {
   }
 
   workspace_creation_properties {
-    custom_security_group_id            = var.workspace_creation_properties.custom_security_group_id
+    custom_security_group_id            = aws_security_group.workspace.id
     default_ou                          = var.workspace_creation_properties.default_ou
     enable_internet_access              = var.workspace_creation_properties.enable_internet_access
     enable_maintenance_mode             = var.workspace_creation_properties.enable_maintenance_mode
     user_enabled_as_local_administrator = var.workspace_creation_properties.user_enabled_as_local_administrator
   }
+
+  ip_group_ids = [
+    aws_workspaces_ip_group.nat.id
+  ]
 
   depends_on = [
     aws_iam_role_policy_attachment.workspaces_default_service_access,
@@ -154,6 +158,7 @@ resource "random_password" "ad_password" {
 }
 
 resource "aws_ssm_parameter" "ad_password" {
+  count = var.directory_type == "MicrosoftAD" ? 1 : 0
   name  = local.ssm_parameter_name # Replace with your desired SSM parameter name
   type  = "SecureString"
   value = random_password.ad_password.result
@@ -180,6 +185,7 @@ resource "random_password" "ad_connector_password" {
 }
 
 resource "aws_ssm_parameter" "ad_connector_password" {
+  count = var.directory_type == "ADConnector" ? 1 : 0
   name  = local.ssm_ad_connector_parameter_name # Replace with your desired SSM parameter name
   type  = "SecureString"
   value = random_password.ad_connector_password.result
@@ -193,10 +199,10 @@ resource "aws_directory_service_directory" "ADConnector" {
   type     = var.directory_type
 
   connect_settings {
-    customer_dns_ips  = var.directory_connect_settings.customer_dns_ips
-    customer_username = var.directory_connect_settings.customer_username
-    subnet_ids        = var.directory_connect_settings.subnet_ids
-    vpc_id            = var.directory_connect_settings.vpc_id
+    customer_dns_ips  = var.customer_dns_ips
+    customer_username = var.customer_username
+    subnet_ids        = var.subnet_ids
+    vpc_id            = var.vpc_id
   }
 }
 
@@ -230,7 +236,7 @@ resource "aws_workspaces_workspace" "workspace" {
 
   root_volume_encryption_enabled = true
   user_volume_encryption_enabled = true
-  volume_encryption_key          = "alias/aws/workspaces"
+  volume_encryption_key          = var.volume_encryption_key
 
   workspace_properties {
     compute_type_name                         = var.workspace_properties.compute_type_name
@@ -239,6 +245,7 @@ resource "aws_workspaces_workspace" "workspace" {
     running_mode                              = var.workspace_properties.running_mode
     running_mode_auto_stop_timeout_in_minutes = var.workspace_properties.running_mode_auto_stop_timeout_in_minutes
   }
+
 
   tags = var.tags
   depends_on = [

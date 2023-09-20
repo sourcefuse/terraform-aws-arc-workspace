@@ -74,32 +74,16 @@ variable "directory_size" {
   default     = "Small" # Provide a default value
 }
 
-# variable "directory_vpc_settings" {
-#   description = "VPC settings for MicrosoftAD."
-#   type = object({
-#     vpc_id     = string
-#     subnet_ids = list(string)
-#   })
-#   default = {
-#     vpc_id     = ""
-#     subnet_ids = []
-#   }
-# }
-
-variable "directory_connect_settings" {
+variable "customer_dns_ips" {
+  type        = list(string)
   description = "Connect settings for ADConnector."
-  type = object({
-    customer_dns_ips  = list(string)
-    customer_username = string
-    subnet_ids        = list(string)
-    vpc_id            = string
-  })
-  default = {
-    customer_dns_ips  = []
-    customer_username = ""
-    subnet_ids        = []
-    vpc_id            = ""
-  }
+  default     = []
+}
+
+variable "customer_username" {
+  type        = string
+  description = "Connect settings for ADConnector."
+  default     = ""
 }
 
 variable "self_service_permissions" {
@@ -193,9 +177,10 @@ variable "ingress_rules" {
   }))
   default = [
     {
-      from_port = 443
-      to_port   = 443
-      protocol  = "tcp"
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
     },
   ]
 }
@@ -237,4 +222,10 @@ variable "ip_rules" {
     description = string
   }))
   default = []
+}
+
+variable "volume_encryption_key" {
+  description = "encryption key"
+  type        = string
+  default     = ""
 }
