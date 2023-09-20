@@ -1,4 +1,4 @@
-# arc-terraform-workspace Microsoft-AD example
+# arc-terraform-workspace AD-Connector example
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -34,9 +34,11 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_customer_dns_ips"></a> [customer\_dns\_ips](#input\_customer\_dns\_ips) | (Required) The DNS IP addresses of the domain to connect to. | `list(string)` | `[]` | no |
+| <a name="input_customer_username"></a> [customer\_username](#input\_customer\_username) | (Required) The username corresponding to the password provided. | `string` | `""` | no |
 | <a name="input_directory_name"></a> [directory\_name](#input\_directory\_name) | must be a fully qualified domain name and cannot end with a trailing period | `string` | `"poc.woebothealth.com"` | no |
 | <a name="input_directory_size"></a> [directory\_size](#input\_directory\_size) | The size of the directory (Small or Large are accepted values). Large by default. | `string` | `"Small"` | no |
-| <a name="input_directory_type"></a> [directory\_type](#input\_directory\_type) | Type of the directory service (MicrosoftAD or ADConnector). | `string` | `"MicrosoftAD"` | no |
+| <a name="input_directory_type"></a> [directory\_type](#input\_directory\_type) | Type of the directory service (MicrosoftAD or ADConnector). | `string` | `"ADConnector"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment resources will belong to. | `string` | `"dev"` | no |
 | <a name="input_environment_name_conversion"></a> [environment\_name\_conversion](#input\_environment\_name\_conversion) | Map environment name with Control Tower generated naming convention for VPC resource names. | `map(string)` | <pre>{<br>  "dev": "Non-Prod"<br>}</pre> | no |
 | <a name="input_ip_rules"></a> [ip\_rules](#input\_ip\_rules) | List of IP rules | <pre>list(object({<br>    source      = string<br>    description = string<br>  }))</pre> | <pre>[<br>  {<br>    "description": "NAT",<br>    "source": "150.24.14.0/24"<br>  },<br>  {<br>    "description": "NAT",<br>    "source": "125.191.14.85/32"<br>  }<br>]</pre> | no |
