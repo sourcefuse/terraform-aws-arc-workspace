@@ -28,7 +28,7 @@ module "tags" {
   }
 }
 
-module "workspaces" {
+module "microsoft-ad-workspace" {
   source = "../../"
 
   region                             = var.region

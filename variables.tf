@@ -229,3 +229,21 @@ variable "volume_encryption_key" {
   type        = string
   default     = ""
 }
+
+variable "iam_role_name" {
+  description = "workspace iam-role-name"
+  type        = string
+  default     = "workspaces_DefaultRole"
+}
+
+variable "ssm_parameter_name" {
+  description = "ssm parameter name for microsoft AD"
+  type        = string
+  default     = "/workspace/microsoft-ad/password"
+}
+
+variable "ssm_ad_connector_parameter_name" {
+  description = "ssm parameter name for microsoft AD"
+  type        = string
+  default     = "/workspace/Connector/password"
+}

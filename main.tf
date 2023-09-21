@@ -211,7 +211,7 @@ resource "aws_directory_service_directory" "ADConnector" {
 ########### Iam role and Policy Attachment ##########################
 
 resource "aws_iam_role" "workspaces_default" {
-  name               = "workspaces_DefaultRole"
+  name               = var.iam_role_name
   assume_role_policy = data.aws_iam_policy_document.workspaces.json
 }
 
