@@ -28,7 +28,7 @@ module "tags" {
   }
 }
 
-module "workspaces" {
+module "ad-connector-workspace" {
   source = "../../"
 
   region                             = var.region

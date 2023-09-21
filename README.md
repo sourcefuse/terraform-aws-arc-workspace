@@ -11,7 +11,7 @@ SourceFuse AWS Reference Architecture (ARC) Terraform module for managing Worksp
 To see a Microsoft AD example, check out the [main.tf](https://github.com/sourcefuse/arc-terraform-workspace/blob/main/examples/Microsoft-AD/main.tf) file in the example folder.  
 
 ```hcl
-module "workspaces" {
+module "microsoft-ad-workspace" {
   source = "../../"
   region                             = var.region
   vpc_id                             = data.aws_vpc.vpc.id
@@ -35,7 +35,7 @@ module "workspaces" {
 To see a AD Connector example, check out the [main.tf](https://github.com/sourcefuse/arc-terraform-workspace/blob/main/examples/AD-Connector/main.tf) file in the example folder.
 
 ```hcl
-module "workspaces" {
+module "ad-connector-workspace" {
   source = "../../"
   region                             = var.region
   vpc_id                             = data.aws_vpc.vpc.id
