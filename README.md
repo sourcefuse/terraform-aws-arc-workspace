@@ -89,7 +89,7 @@ As we specified three custom user_names that means three workspaces for each use
 
 7. Last thing but not the least and this is very important that if you are trying to deploy in us-east-1 then below AZs are supported. When you are creating a virtual private cloud (VPC) for use with Amazon WorkSpaces, your VPC's subnets must reside in different Availability Zones in the Region where you're launching WorkSpaces. Availability Zones are distinct locations that are engineered to be isolated from failures in other Availability Zones. By launching instances in separate Availability Zones, you can protect your applications from the failure of a single location. Each subnet must reside entirely within one Availability Zone and cannot span zones. Here is the picture of supported Availability Zones For Workspaces.
 
-![availability zones](https://github.com/sourcefuse/terraform-aws-arc-workspace/blob/main/static/az.png)
+[availability zones](https://github.com/sourcefuse/terraform-aws-arc-workspace/blob/main/static/az.png)
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
