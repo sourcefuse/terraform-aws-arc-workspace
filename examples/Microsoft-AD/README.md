@@ -18,7 +18,7 @@
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_microsoft-ad-workspace"></a> [microsoft-ad-workspace](#module\_microsoft-ad-workspace) | ../../ | n/a |
+| <a name="module_microsoft-ad-workspace"></a> [microsoft-ad-workspace](#module\_microsoft-ad-workspace) | sourcefuse/workspace/aws | 1.0.7 |
 | <a name="module_tags"></a> [tags](#module\_tags) | git::https://github.com/sourcefuse/terraform-aws-refarch-tags.git | 1.2.1 |
 
 ## Resources
