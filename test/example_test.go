@@ -10,7 +10,7 @@ import (
 func TestTerraformExample(t *testing.T) {
 	// Arrange
 	terraformOptions := &terraform.Options{
-		TerraformDir: "../example/Microsoft-AD",
+		TerraformDir: "../examples/Microsoft-AD",
 	}
 	defer terraform.Destroy(t, terraformOptions)
 
