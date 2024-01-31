@@ -34,7 +34,7 @@
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_directory_name"></a> [directory\_name](#input\_directory\_name) | must be a fully qualified domain name and cannot end with a trailing period | `string` | `"poc.woebothealth.com"` | no |
+| <a name="input_directory_name"></a> [directory\_name](#input\_directory\_name) | must be a fully qualified domain name and cannot end with a trailing period | `string` | `"poc.sourcefuse.com"` | no |
 | <a name="input_directory_size"></a> [directory\_size](#input\_directory\_size) | The size of the directory (Small or Large are accepted values). Large by default. | `string` | `"Small"` | no |
 | <a name="input_directory_type"></a> [directory\_type](#input\_directory\_type) | Type of the directory service (MicrosoftAD or ADConnector). | `string` | `"MicrosoftAD"` | no |
 | <a name="input_environment"></a> [environment](#input\_environment) | Name of the environment resources will belong to. | `string` | `"dev"` | no |

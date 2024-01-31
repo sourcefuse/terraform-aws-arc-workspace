@@ -70,7 +70,7 @@ variable "directory_type" {
 variable "directory_name" {
   description = "must be a fully qualified domain name and cannot end with a trailing period"
   type        = string
-  default     = "poc.woebothealth.com" # Provide a default value
+  default     = "poc.sourcefuse.com" # Provide a default value
 }
 
 variable "directory_size" {
