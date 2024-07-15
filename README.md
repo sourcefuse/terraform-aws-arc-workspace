@@ -1,4 +1,4 @@
-![Module Structure](./static/workspaces.png)
+![Module Structure](./static/banner.png)
 
 # [terraform-aws-arc-workspace](https://github.com/sourcefuse/terraform-aws-arc-workspace)
 
